@@ -65,14 +65,13 @@ const Impact = () => {
               key={i} 
               className="flex items-center gap-4 md:gap-6 p-4 rounded-2xl card-pro hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 transform hover:scale-[1.01] border-slate-100 dark:border-slate-800"
             >
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ${i === 1 ? 'bg-gradient-to-r from-yellow-400 to-amber-600 scale-110' : i === 2 ? 'bg-gradient-to-r from-slate-300 to-slate-500' : i === 3 ? 'bg-gradient-to-r from-amber-600 to-orange-800' : 'bg-slate-800 dark:bg-slate-700'}`}>
-                #{i}
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-slate-900 dark:text-white font-bold text-lg shadow-lg ${i === 1 ? 'bg-gradient-to-r from-yellow-400 to-amber-600 scale-110' : i === 2 ? 'bg-gradient-to-r from-slate-300 to-slate-500' : i === 3 ? 'bg-gradient-to-r from-amber-600 to-orange-800' : 'bg-slate-800 dark:bg-slate-700'}`}>
               </div>
               <div className="w-14 h-14 rounded-full bg-slate-300 dark:bg-slate-700 overflow-hidden border-2 border-transparent hover:border-emerald-500 transition-colors">
                 <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=EcoWarrior${i}`} alt="Avatar" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-lg text-slate-800 dark:text-white">EcoWarrior{i}</p>
+                <p className="font-bold text-lg text-slate-950 dark:text-white">EcoWarrior{i}</p>
                 <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{150 - i * 12} cleanups verified</p>
               </div>
               <div className="text-right">

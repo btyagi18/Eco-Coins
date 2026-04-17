@@ -31,7 +31,7 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex flex-wrap gap-4"
           >
-            <Link to="/upload" className="px-8 py-4 rounded-xl bg-pink-500 hover:bg-pink-600 dark:bg-pink-500 dark:hover:bg-pink-400 text-white font-bold text-lg shadow-lg dark:shadow-pink-500/20 transition-all flex items-center gap-2 hover:-translate-y-1">
+            <Link to="/upload" className="px-8 py-4 rounded-xl bg-pink-500 hover:bg-pink-600 dark:bg-pink-500 dark:hover:bg-pink-400 text-slate-900 dark:text-white font-bold text-lg shadow-lg dark:shadow-pink-500/20 transition-all flex items-center gap-2 hover:-translate-y-1">
               Start Earning
               <ArrowRight size={20} />
             </Link>
