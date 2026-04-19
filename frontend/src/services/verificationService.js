@@ -1,3 +1,5 @@
+import { buildApiUrl } from "../lib/api";
+
 const toBase64Payload = (source) => {
   if (typeof source === "string" && source.startsWith("data:")) {
     return {
@@ -26,13 +28,15 @@ export const verifyCleaningPhotos = async (
   beforeMeta = {},
   afterMeta = {},
 ) => {
+  const token = localStorage.getItem("token");
   const before = await toBase64Payload(beforeImage);
   const after = await toBase64Payload(afterImage);
 
-  const response = await fetch("/api/verify-cleaning", {
+  const response = await fetch(buildApiUrl("/api/verify-cleaning"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({
       beforeImage: before,

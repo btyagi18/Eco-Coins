@@ -1,5 +1,11 @@
-const { createHttpError } = require("../models/verificationModel");
+
 const { buildPrompt } = require("../utils/promptBuilder");
+
+const createHttpError = (status, message) => {
+  const err = new Error(message);
+  err.statusCode = status;
+  return err;
+};
 
 const parseGroqResponse = async (response) => {
   const rawResponseText = await response.text();

@@ -1,69 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { User, Mail, MessageSquare, Calendar, Send, CheckCircle } from 'lucide-react';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { User, Mail, MessageSquare, Send, CheckCircle } from "lucide-react";
+import { useToast } from "../context/ToastContext";
+import { useTheme } from "../context/ThemeContext";
+import api from "../lib/api";
 
 const JoinBeta = () => {
-  const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phoneNo: '',
-    reason: ''
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: ""
   });
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const toast = useToast();
+  const { theme } = useTheme();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await fetch("http://localhost:3001/api/waitlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    });
+    try {
+      setLoading(true);
 
-    const data = await response.json();
+      await api.post("/api/pre-register", form);
 
-    if (response.ok) {
-      console.log("Success:", data);
+      toast.success("Beta request submitted", "You're on the early access list now.");
+      setSubmittedEmail(form.email);
       setSubmitted(true);
-    } else {
-      alert(data.message || "Failed to submit form");
-    }
 
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("Server error. Please try again.");
-  }
-};
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        message: ""
+      });
+    } catch (err) {
+      toast.error("Could not join beta", err?.response?.data?.message || "Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (submitted) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex items-center justify-center min-h-[70vh]">
-        <motion.div 
+      <div className="mx-auto flex min-h-[70vh] max-w-7xl items-center justify-center px-4 py-24 sm:px-6 lg:px-8">
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass p-12 rounded-3xl text-center max-w-md w-full"
+          className={`glass w-full max-w-md rounded-3xl p-12 text-center border ${
+            theme === 'dark'
+              ? 'border-emerald-500/20'
+              : 'border-emerald-400/30'
+          }`}
         >
-          <div className="w-20 h-20 bg-primary-light/10 text-primary-light rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full ${
+            theme === 'dark'
+              ? 'bg-emerald-500/10 text-emerald-400'
+              : 'bg-emerald-100/60 text-emerald-600'
+          }`}>
             <CheckCircle size={48} />
           </div>
-          <h2 className="text-3xl font-bold text-slate-950 dark:text-white mb-4">You're on the list!</h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-8">
-            Thank you for joining our Beta program. We'll reach out to <strong>{formData.email}</strong> as soon as we're ready for you.
+          <h2 className={`mb-4 text-3xl font-bold ${
+            theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+          }`}>You're on the list!</h2>
+          <p className={`mb-8 ${
+            theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+          }`}>
+            Thank you for joining our beta program. We will reach out to{" "}
+            <strong>{submittedEmail}</strong> as soon as early access opens.
           </p>
-          <button 
-            onClick={() => setSubmitted(false)}
-            className="w-full bg-slate-900 hover:bg-slate-800 dark:bg-primary-light dark:hover:bg-[#00e676] text-white dark:text-slate-900 font-bold py-4 rounded-2xl transition-all shadow-lg shadow-primary-light/20"
+          <button
+            type="button"
+            onClick={() => {
+              setSubmitted(false);
+              setSubmittedEmail("");
+            }}
+            className={`w-full rounded-2xl py-4 font-bold transition ${
+              theme === 'dark'
+                ? 'bg-emerald-600/80 text-white hover:bg-emerald-600'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }`}
           >
-            Back to Home
+            Back to Form
           </button>
         </motion.div>
       </div>
@@ -71,121 +100,186 @@ const JoinBeta = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full flex flex-col items-center relative overflow-hidden">
-      {/* Background Decorators */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[120px] z-[-1]" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] z-[-1]" />
+    <div className={`relative mx-auto flex w-full max-w-7xl flex-col items-center overflow-hidden px-4 py-16 sm:px-6 lg:px-8 ${
+      theme === 'dark' ? 'bg-slate-900/20' : 'bg-slate-50/30'
+    }`}>
+      <div className="absolute top-0 right-0 z-[-1] h-[420px] w-[420px] rounded-full bg-pink-500/10 blur-[120px]" />
+      <div className="absolute bottom-0 left-0 z-[-1] h-[420px] w-[420px] rounded-full bg-indigo-500/10 blur-[120px]" />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12 max-w-2xl px-4"
+        className="mb-12 max-w-2xl px-4 text-center"
       >
-        <span className="inline-block px-4 py-1.5 rounded-full bg-pink-500/10 text-pink-500 dark:text-pink-400 font-bold text-sm mb-4 border border-pink-500/20">
-          Coming Soon! 👋
+        <span className={`mb-4 inline-block rounded-full border px-4 py-1.5 text-sm font-bold ${
+          theme === 'dark'
+            ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+            : 'border-emerald-400/40 bg-emerald-100/50 text-emerald-600'
+        }`}>
+          Coming Soon
         </span>
-        <h1 className="text-4xl md:text-6xl font-extrabold text-slate-950 dark:text-white mb-6">Join our Private <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-indigo-500">Beta</span></h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-          Be among the first to experience the future of AI-powered environmental rewards. Help us shape the platform and earn exclusive early-adopter badges.
+        <h1 className={`mb-6 text-4xl font-extrabold md:text-6xl ${
+          theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+        }`}>
+          Join our Private{" "}
+          <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            Beta
+          </span>
+        </h1>
+        <p className={`text-lg leading-relaxed ${
+          theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+        }`}>
+          Be among the first to explore Clean2Earn, shape the experience with your
+          feedback, and get early access before the public launch.
         </p>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="w-full max-w-2xl"
       >
-        <div className="glass p-8 md:p-10 rounded-[2.5rem] relative overflow-hidden">
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 dark:to-transparent pointer-events-none" />
-          
-          <form className="space-y-6 relative z-10" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2 group">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1 group-focus-within:text-pink-500 transition-colors flex items-center gap-2">
+        <div className={`glass relative overflow-hidden rounded-[2.5rem] p-8 md:p-10 border ${
+          theme === 'dark'
+            ? 'border-emerald-500/10'
+            : 'border-emerald-400/20'
+        }`}>
+          <div className={`pointer-events-none absolute inset-0 ${
+            theme === 'dark'
+              ? 'bg-gradient-to-br from-slate-400/5 to-transparent'
+              : 'bg-gradient-to-br from-white/60 to-transparent'
+          }`} />
+
+          <form className="relative z-10 space-y-6" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <label htmlFor="firstName" className={`ml-1 flex items-center gap-2 text-sm font-semibold ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   <User size={16} /> First Name
                 </label>
-                <input 
+                <input
                   required
-                  type="text" 
-                  name="first_name"
-                  value={formData.first_name}
+                  id="firstName"
+                  type="text"
+                  name="firstName"
+                  value={form.firstName}
                   onChange={handleChange}
-                  placeholder="Bhumika" 
-                  className="w-full bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:border-pink-500 text-slate-900 dark:text-white transition-all shadow-inner"
+                  placeholder="Bhumika"
+                  className={`w-full rounded-2xl px-5 py-4 shadow-inner outline-none transition ${
+                    theme === 'dark'
+                      ? 'border border-slate-600/40 bg-slate-700/30 text-slate-100 placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
+                      : 'border border-slate-200 bg-white/70 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
+                  }`}
                 />
               </div>
-              <div className="space-y-2 group">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1 group-focus-within:text-pink-500 transition-colors flex items-center gap-2">
+
+              <div className="space-y-2">
+                <label htmlFor="lastName" className={`ml-1 flex items-center gap-2 text-sm font-semibold ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   <User size={16} /> Last Name
                 </label>
-                <input 
+                <input
                   required
-                  type="text" 
-                  name="last_name"
-                  value={formData.last_name}
+                  id="lastName"
+                  type="text"
+                  name="lastName"
+                  value={form.lastName}
                   onChange={handleChange}
-                  placeholder="Tyagi" 
-                  className="w-full bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:border-pink-500 text-slate-900 dark:text-white transition-all shadow-inner"
+                  placeholder="Tyagi"
+                  className={`w-full rounded-2xl px-5 py-4 shadow-inner outline-none transition ${
+                    theme === 'dark'
+                      ? 'border border-slate-600/40 bg-slate-700/30 text-slate-100 placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
+                      : 'border border-slate-200 bg-white/70 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
+                  }`}
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2 group">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1 group-focus-within:text-pink-500 transition-colors flex items-center gap-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <label htmlFor="email" className={`ml-1 flex items-center gap-2 text-sm font-semibold ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   <Mail size={16} /> Email Address
                 </label>
-                <input 
+                <input
                   required
-                  type="email" 
+                  id="email"
+                  type="email"
                   name="email"
-                  value={formData.email}
+                  value={form.email}
                   onChange={handleChange}
-                  placeholder="ayush.tiwari@example.com" 
-                  className="w-full bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:border-pink-500 text-slate-900 dark:text-white transition-all shadow-inner"
+                  placeholder="btyag67@example.com"
+                  className={`w-full rounded-2xl px-5 py-4 shadow-inner outline-none transition ${
+                    theme === 'dark'
+                      ? 'border border-slate-600/40 bg-slate-700/30 text-slate-100 placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
+                      : 'border border-slate-200 bg-white/70 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
+                  }`}
                 />
               </div>
-              <div className="space-y-2 group">
-                <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1 group-focus-within:text-pink-500 transition-colors flex items-center gap-2">
-                  <span className="text-lg">📞</span> Phone Number
+
+              <div className="space-y-2">
+                <label htmlFor="phone" className={`ml-1 text-sm font-semibold ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+                }`}>
+                  Phone Number
                 </label>
-                <input 
+                <input
                   required
-                  type="tel" 
-                  name="phoneNo"
-                  value={formData.phoneNo}
+                  id="phone"
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
                   onChange={handleChange}
-                  placeholder="+91 9953195428" 
-                  className="w-full bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:border-pink-500 text-slate-900 dark:text-white transition-all shadow-inner"
+                  placeholder="+91 5678923412"
+                  className={`w-full rounded-2xl px-5 py-4 shadow-inner outline-none transition ${
+                    theme === 'dark'
+                      ? 'border border-slate-600/40 bg-slate-700/30 text-slate-100 placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
+                      : 'border border-slate-200 bg-white/70 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
+                  }`}
                 />
               </div>
             </div>
 
-            <div className="space-y-2 group">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1 group-focus-within:text-pink-500 transition-colors flex items-center gap-2">
+            <div className="space-y-2">
+              <label htmlFor="message" className={`ml-1 flex items-center gap-2 text-sm font-semibold ${
+                theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
+              }`}>
                 <MessageSquare size={16} /> Why do you want to join?
               </label>
-              <textarea 
+              <textarea
                 required
-                name="reason"
-                value={formData.reason}
+                id="message"
+                name="message"
+                value={form.message}
                 onChange={handleChange}
-                rows="4" 
-                placeholder="Share your interest in environmental sustainability..." 
-                className="w-full bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:border-pink-500 text-slate-900 dark:text-white transition-all resize-none shadow-inner"
-              ></textarea>
+                rows="4"
+                placeholder="Share your interest in Clean2Earn and what excites you about joining early."
+                className={`w-full resize-none rounded-2xl px-5 py-4 shadow-inner outline-none transition ${
+                  theme === 'dark'
+                    ? 'border border-slate-600/40 bg-slate-700/30 text-slate-100 placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
+                    : 'border border-slate-200 bg-white/70 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30'
+                }`}
+              />
             </div>
 
-            
-            <button 
+            <button
               type="submit"
-              className="w-full bg-slate-900 hover:bg-slate-800 dark:bg-pink-500 dark:hover:bg-pink-400 text-white font-bold text-lg py-5 rounded-2xl shadow-xl hover:shadow-pink-500/20 transition-all flex items-center justify-center gap-3 group mt-4 overflow-hidden relative"
+              disabled={loading}
+              className={`group relative mt-4 flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl py-5 text-lg font-bold transition disabled:cursor-not-allowed disabled:opacity-70 ${
+                theme === 'dark'
+                  ? 'bg-emerald-600/80 text-white hover:bg-emerald-600'
+                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
+              }`}
             >
-              <span className="relative z-10">Request Access</span>
-              <Send size={20} className="relative z-10 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="relative z-10">{loading ? "Submitting..." : "Request Access"}</span>
+              <Send
+                size={20}
+                className="relative z-10 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+              />
             </button>
           </form>
         </div>
