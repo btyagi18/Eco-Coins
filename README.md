@@ -225,12 +225,15 @@ If you like this project:
 
 
 
+
 <img width="1887" height="934" alt="Screenshot 2026-04-26 112110" src="https://github.com/user-attachments/assets/5992f6ff-6ba7-4f6b-a341-058be17763c6" />
 
 
 
 
-<img width="1891" height="968" alt="Screenshot 2026-04-26 112135" src="https://github.com/user-attachments/assets/f4417c5a-8cc0-42ee-a802-07eb9cc84cce" />
+
+<img width="1883" height="965" alt="Screenshot 2026-04-26 112948" src="https://github.com/user-attachments/assets/9f7b886f-4e4a-401e-bdf3-088a6a41c8e5" />
+
 
 
 
