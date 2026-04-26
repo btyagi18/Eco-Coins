@@ -219,8 +219,23 @@ If you like this project:
 
 ## Sneak-Peak
 
-<img width="1915" height="975" alt="Screenshot 2026-04-21 205410" src="https://github.com/user-attachments/assets/d14c14bf-6837-4146-9480-1b171bbfb8a8" />
+
+<img width="1900" height="969" alt="Screenshot 2026-04-26 112021" src="https://github.com/user-attachments/assets/7c03ff26-286a-41d8-883e-30cca5c9b1f8" />
 
 
-<img width="1916" height="971" alt="Screenshot 2026-04-21 205501" src="https://github.com/user-attachments/assets/8eaf2fd2-7a57-4511-b753-d59e13fe7966" />
+
+
+<img width="1887" height="934" alt="Screenshot 2026-04-26 112110" src="https://github.com/user-attachments/assets/5992f6ff-6ba7-4f6b-a341-058be17763c6" />
+
+
+
+
+<img width="1891" height="968" alt="Screenshot 2026-04-26 112135" src="https://github.com/user-attachments/assets/f4417c5a-8cc0-42ee-a802-07eb9cc84cce" />
+
+
+
+
+<img width="1897" height="970" alt="Screenshot 2026-04-26 112156" src="https://github.com/user-attachments/assets/4d82314a-4a29-4510-aefd-2fe3c104c9e7" />
+
+
 
